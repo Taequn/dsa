@@ -1,13 +1,14 @@
 import java.util.*;
 
 public class NoLengthSearch {
-    
-    public static <T extends Comparable<? super T>>
-    /** find function
-     * @param labList of type LabList<T> and undefined length
-     * @param target of type T
-     * @return position of target in labList, or -1 if target is not in labList
+    /**
+     * Finds the position of a target in a list
+     * @param list — list of type LabList<T> to search
+     * @param target — target of type T to search for
+     * @param <T> — type of elements in list
+     * @return — position of target in list, or -1 if target is not in list
      */
+    public static <T extends Comparable<? super T>>
     int find(LabList<T> list, T target){
         /**due to the nature of .createRandomList(), there is no need to check for null
         within this function, since it's impossible to init LabList with nulls or
@@ -27,7 +28,9 @@ public class NoLengthSearch {
         int currExp = 0; //exponent size
         T curr = list.get(0); //position
 
-        //Implement incrementing jumps of size 2^currExp until the upper bound is established
+        /**Implement exponentially incrementing jumps of size
+         * 2^currExp until the upper bound is established
+         */
         while(curr != null){
             if(curr.compareTo(target) > 0){
                 break;
@@ -44,6 +47,20 @@ public class NoLengthSearch {
          * With established higher and lower bounds, we can now check if the target is in the list
          * via binary search
          */
+        return binarySearch(list, target, lower, upper);
+    }
+
+    /**
+     * Helper function to perform binary search on a list
+     * @param list — list of type LabList<T> to search
+     * @param target — target of type T to search for
+     * @param lower — lower bound of type int
+     * @param upper — upper bound of type int
+     * @param <T> — type of elements in list
+     * @return — position of target in list, or -1 if target is not in list
+     */
+    public static <T extends Comparable<? super T>>
+    int binarySearch(LabList<T> list, T target, int lower, int upper){
         while(lower <= upper) {
             int mid = (lower + upper) / 2;
             T midVal = list.get(mid);
@@ -56,9 +73,7 @@ public class NoLengthSearch {
                 return mid;
             }
         }
-
-        return -1; //return -1 if target is not in list
-
+        return -1;
     }
 
     /**Helper function to exponentiate 2 to a certain power
@@ -84,11 +99,14 @@ public class NoLengthSearch {
                 lowerBound, higherBound);
 
         /**Test 1 — integer exists within the list*/
+        //* Refer to line #45 of LabList.java fo implementation of the .size() function*/
         /*int target = (int) (Math.random() * labList.size());
         int position = find(labList, labList.get(target));*/
+
         /**Test 2 - integer is guranted to not exist within the list*/
         //int target = 100000;
         //int position = find(labList, target);
+
         /**Test 3 — integer might be within the list of max size 10000*/
         /*Random rng = new Random();
         int counter = 0;
