@@ -41,9 +41,11 @@ public class LabList<T extends Comparable<? super T>>
         return items.toString();
     }
 
+    /** ADDED FOR TESTING PURPOSES */
     public int size() {
         return items.size();
     }
+
 
     // query the data structure
     public T get(int index) {

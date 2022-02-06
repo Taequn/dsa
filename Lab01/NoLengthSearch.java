@@ -1,12 +1,14 @@
+import java.util.*;
+
 public class NoLengthSearch {
     
     public static <T extends Comparable<? super T>>
 
-    //raise to the exponent)
 
     int find(LabList<T> list, T target){
         //due to the nature of .createRandomList(), there is no need to check for null
-        //However, we still need to check for empty list
+        //within this function, since it's impossible to init LabList with nulls or
+        //with an empty list (it throws an exception when bounds are invalid)
 
         //CHECKS
         if(list.get(0) == null){return -1;}
@@ -55,16 +57,41 @@ public class NoLengthSearch {
     }
 
     public static void main(String[] args) {
-        // TODO: Your testing code goes here
+        //Basic tests
+        int higherLength = (int) (Math.random() * 10000);
+        int lowerLength = (int) (Math.random() * higherLength);
+        int higherBound = (int) (Math.random() * 100000);
+        int lowerBound = (int) (Math.random() * higherBound);
+        LabList<Integer> labList = LabList.createRandomList(lowerLength, higherLength,
+                lowerBound, higherBound);
 
-        LabList<Integer> labList = LabList.createRandomList(100, 200, 1000, 2000);
-        //random whole number between 0 and 200
-        int target = (int) (Math.random() * 200);
-        int position = find(labList, labList.get(target));
+        /**Test 1 — integer exists within the list*/
+        /*int target = (int) (Math.random() * labList.size());
+        int position = find(labList, labList.get(target));*/
+        /**Test 2 - integer is guranted to not exist within the list*/
+        //int target = 100000;
+        //int position = find(labList, target);
+        /**Test 3 — integer might be within the list of max size 10000*/
+        /*Random rng = new Random();
+        int counter = 0;
+        int valueBound = higherBound-lowerBound;
+        int bound = 100;
+        for (int i = 0; i < bound; i++) {
+            int target = lowerBound + rng.nextInt(valueBound);
+            int position = find(labList, target);
 
-        System.out.println(position);
+            if (position != -1 && labList.get(position).compareTo(target) == 0) {
+                counter++;
+            }
+        }
+        System.out.println("TEST 3:\n"+"Number of times target was found: " + counter + " out of " + bound + " tests\n" +
+                "Length of list: " + labList.size()+"\n");*/
+
+
+
+        /*System.out.println(position);
         if (position >= 0)
-            System.out.println(position==target);
+            System.out.println(position==target);*/
     }
 
 }
