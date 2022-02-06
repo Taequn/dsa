@@ -3,21 +3,31 @@ import java.util.*;
 public class NoLengthSearch {
     
     public static <T extends Comparable<? super T>>
-
-
+    /** find function
+     * @param labList of type LabList<T> and undefined length
+     * @param target of type T
+     * @return position of target in labList, or -1 if target is not in labList
+     */
     int find(LabList<T> list, T target){
-        //due to the nature of .createRandomList(), there is no need to check for null
-        //within this function, since it's impossible to init LabList with nulls or
-        //with an empty list (it throws an exception when bounds are invalid)
+        /**due to the nature of .createRandomList(), there is no need to check for null
+        within this function, since it's impossible to init LabList with nulls or
+        with an empty list (it throws an exception when bounds are invalid)
+         */
 
         //CHECKS
         if(list.get(0) == null){return -1;}
         if(list.get(0).compareTo(target) == 0){return 0;}
+        /** Due to the nature of the list, the elements are sorted in ascending order,
+         * If the first element is greater than the target, the target cannot be in the list
+         * So we can return -1
+         * */
+        if(list.get(0).compareTo(target) > 0){return -1;}
 
         //BODY
         int currExp = 0; //exponent size
         T curr = list.get(0); //position
 
+        //Implement incrementing jumps of size 2^currExp until the upper bound is established
         while(curr != null){
             if(curr.compareTo(target) > 0){
                 break;
@@ -30,7 +40,10 @@ public class NoLengthSearch {
         int lower = exponent(2, currExp-1);
         int upper = exponent(2, currExp);
 
-        //binary search
+        /**
+         * With established higher and lower bounds, we can now check if the target is in the list
+         * via binary search
+         */
         while(lower <= upper) {
             int mid = (lower + upper) / 2;
             T midVal = list.get(mid);
@@ -44,10 +57,15 @@ public class NoLengthSearch {
             }
         }
 
-        return -1;  // replace with correct return value
+        return -1; //return -1 if target is not in list
 
     }
 
+    /**Helper function to exponentiate 2 to a certain power
+     * @param base
+     * @param exponent
+     * @return base^exponent
+     */
     static int exponent(int base, int exponent) {
         int result = 1;
         for (int i = 0; i < exponent; i++) {
@@ -57,7 +75,7 @@ public class NoLengthSearch {
     }
 
     public static void main(String[] args) {
-        //Basic tests
+        //TEST CASES
         int higherLength = (int) (Math.random() * 10000);
         int lowerLength = (int) (Math.random() * higherLength);
         int higherBound = (int) (Math.random() * 100000);
