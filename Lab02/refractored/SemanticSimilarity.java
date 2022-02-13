@@ -7,7 +7,6 @@ import java.lang.Math;
 class SemanticSimilarity {
     private HashMap<String, HashMap<String, Integer>> descriptors;
     private Iterable<String> bodyOfText;
-    private HashMap<String, Integer> uniqueWords;
 
     /**
      * Constructor for the SemanticSimilarity program.
@@ -46,21 +45,38 @@ class SemanticSimilarity {
      * @return HashMap<String, Integer> of the number of times a given value
      * appears in the same sentence with the other words
      */
-
     public HashMap<String, Integer> uniqueValues(String value) {
         HashMap<String, Integer> uniques = new HashMap<String, Integer>();
-        for (String sentence : bodyOfText) {
-            if (sentence.contains(value)) {
-                for (String values : sentence.split(" "))
-                    if (!values.equals(value)) {
-                        if (!uniques.containsKey(values)) {
-                            uniques.put(values, 1);
+        for (String sentence : this.bodyOfText) {
+            /**
+             * OPTIMIZE IT PLS
+             * IT LOOKS SO BAD, OMG, BUT IT'S 12AM
+             * AND I'M SO TIRED
+             */
+
+            boolean found = false;
+            for (String word : sentence.split(" ")) {
+                if (word.equals(value)) {
+                    found = true;
+                }
+            }
+
+            if(found) {
+                HashSet<String> seen = new HashSet<String>();
+                for (String word : sentence.split(" ")) {
+                    if (!word.equals(value) && !seen.contains(word)) {
+                        seen.add(word);
+                        if (!uniques.containsKey(word)) {
+                            uniques.put(word, 1);
                         } else {
-                            uniques.put(values, uniques.get(values) + 1);
+                            uniques.put(word, uniques.get(word) + 1);
                         }
                     }
+                }
+
             }
         }
+        System.out.println(value + ": " + uniques);
         return uniques;
     }
 
@@ -73,7 +89,8 @@ class SemanticSimilarity {
      */
 
     private double compare(HashMap<String, Integer> first, HashMap<String, Integer> second) {
-        int sharedNumber = 0;
+        double sharedNumber = 0;
+
         for(String key : first.keySet()) {
             if(second.containsKey(key)) {
                 sharedNumber += first.get(key) * second.get(key);
@@ -91,11 +108,11 @@ class SemanticSimilarity {
     public double similarity(String w1, String w2) {
         w1 = w1.toLowerCase();
         w2 = w2.toLowerCase();
-        if(!descriptors.containsKey(w1) || !descriptors.containsKey(w2)) {
+        if(!this.descriptors.containsKey(w1) || !this.descriptors.containsKey(w2)) {
             return -1.0;
         }
-        HashMap<String, Integer> comp1 = descriptors.get(w1);
-        HashMap<String, Integer> comp2 = descriptors.get(w2);
+        HashMap<String, Integer> comp1 = this.descriptors.get(w1);
+        HashMap<String, Integer> comp2 = this.descriptors.get(w2);
 
 
         double numerator = compare(comp1, comp2);
@@ -108,19 +125,18 @@ class SemanticSimilarity {
 
     public static void main(String[] args) {
         String[] test = {
-             "This is a very handsome sentence",
-             //"This is a blue dog",
+             //"This is a very handsome sentence",
              "This is a blue dog",
-               "dog dog dog dog dog is",
+                "This is a blue dog",
+                // "dog dog dog dog dog is",
              "The blue dog is very happy",
-             // "The mannequin is mediocre",
-                "This is a suboptimal sentence",
-             // "The dog said \"THIS IS A VERY HANDSOME BLUE MANNEQUIN\""
+             //"The dog said THIS IS A VERY HANDSOME BLUE MANNEQUIN"
          };
 
 
         SemanticSimilarity test1 = new SemanticSimilarity(Arrays.asList(test));
-        System.out.println(test1.similarity("This", "is"));
+        //System.out.println(test1.descriptors);
+        System.out.println(test1.similarity("dog", "is"));
 
     }
 }
