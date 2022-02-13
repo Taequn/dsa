@@ -5,9 +5,6 @@ import java.util.Map;
 import java.lang.Math;
 
 class SemanticSimilarity {
-    /**
-     * Change to private later
-     */
     private HashMap<String, HashMap<String, Integer>> descriptors;
     private Iterable<String> bodyOfText;
     private HashMap<String, Integer> uniqueWords;
@@ -26,9 +23,8 @@ class SemanticSimilarity {
     }
 
     /**
-     * Method to generate descriptors for each of the words. Each descriptor's values are
-     * its count of shared sentences with other words.
-     * @param sentences The sentences being used to determine semantic similarity.
+     * Creates a HashMap with HashMaps:
+     * Each unique words gets a HashMap with semantic descriptors.
      */
     private void split() {
         //initiate HashMap of HashMaps
@@ -42,6 +38,13 @@ class SemanticSimilarity {
         }
         this.descriptors = bigD;
     }
+
+    /**
+     * Creates a HashMap with the unique words and their semantic descriptors.
+     * A helper function for the split function.
+     * @param value
+     * @return
+     */
 
     public HashMap<String, Integer> uniqueValues(String value) {
         HashMap<String, Integer> uniques = new HashMap<String, Integer>();
@@ -61,37 +64,12 @@ class SemanticSimilarity {
     }
 
     /**
-     * Calculates the similarity ratio between two words.
-     * @param w1 The first word being compared.
-     * @param w2 The second word being compared.
-     * @return A double indicating the ration between the words.
+     * Compares the two HashMaps and returns the formula-based similarity.
+     * Helper function for the similarity function.
+     * @param first The first HashMap<String, Integer>
+     * @param second The second HashMap<String, Integer>
+     * @return The similarity between the two HashMaps.
      */
-//    public double similarity(String w1, String w2) {
-//        int numeratorSum = 0;
-//        int aSquared = 0;
-//        int bSquared = 0;
-//        w1 = w1.toLowerCase();
-//        w2 = w2.toLowerCase();
-//
-//        if ((!descriptors.containsKey(w1)) || (!descriptors.containsKey(w2))) { // Verification
-//            return -1.0;
-//        }
-//
-//        for (String key : descriptors.get(w1).keySet()) { // Count words in first word descriptor.
-//            if (descriptors.get(w2).containsKey(key)) {
-//                numeratorSum += descriptors.get(w1).get(key) * descriptors.get(w2).get(key); // Count shared words.
-//                aSquared += descriptors.get(w1).get(key) * descriptors.get(w1).get(key);
-//            } else {
-//                aSquared += descriptors.get(w1).get(key) * descriptors.get(w1).get(key);
-//            }
-//        }
-//
-//        for (String key : descriptors.get(w2).keySet()) { // Count words in second word descriptor.
-//            bSquared += descriptors.get(w2).get(key) * descriptors.get(w2).get(key);
-//        }
-//
-//        return (numeratorSum/(Math.sqrt(aSquared * bSquared)));
-//    }
 
     private double compare(HashMap<String, Integer> first, HashMap<String, Integer> second) {
         int sharedNumber = 0;
@@ -103,6 +81,12 @@ class SemanticSimilarity {
         return sharedNumber;
     }
 
+    /**
+     * Returns the similarity between the two words.
+     * @param w1 The first word.
+     * @param w2 The second word.
+     * @return The similarity between the two words based on the provided formula.
+     */
     public double similarity(String w1, String w2) {
         w1 = w1.toLowerCase();
         w2 = w2.toLowerCase();
@@ -135,10 +119,6 @@ class SemanticSimilarity {
 
 
         SemanticSimilarity test1 = new SemanticSimilarity(Arrays.asList(test));
-
-        //System.out.println(test1.bodyOfText);
-        //System.out.println(test1.descriptors);
-
         System.out.println(test1.similarity("This", "is"));
 
     }
