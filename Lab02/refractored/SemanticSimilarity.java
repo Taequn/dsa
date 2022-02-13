@@ -43,7 +43,8 @@ class SemanticSimilarity {
      * Creates a HashMap with the unique words and their semantic descriptors.
      * A helper function for the split function.
      * @param value
-     * @return
+     * @return HashMap<String, Integer> of the number of times a given value
+     * appears in the same sentence with the other words
      */
 
     public HashMap<String, Integer> uniqueValues(String value) {
