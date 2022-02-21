@@ -106,22 +106,22 @@ public class Uppermost {
         merged[mergedPos++] = left[firstPos++];
         merged[merged.length - 1] = right[right.length - 1];
 
-        double minmax = merged[0].findIntersection(merged[merged.length - 1]);
+        //double minmax = merged[0].findIntersection(merged[merged.length - 1]);
 
         while(firstPos < left.length){
             Line previous = merged[mergedPos-1];
             Line currentLeft = left[firstPos];
             Line currentRight = right[secondPos];
+            double minmax = previous.findIntersection(merged[merged.length - 1]);
 
             double leftIntersection = previous.findIntersection(currentLeft);
             double rightIntersection = previous.findIntersection(currentRight);
-
 
             double currValueAtX = currentLeft.evaluateAtX(leftIntersection);
             double rightValueAtX = currentRight.evaluateAtX(rightIntersection);
 
 
-            if(leftIntersection < rightIntersection && leftIntersection < minmax){
+            if(leftIntersection < rightIntersection && leftIntersection < minmax) {
                 merged[mergedPos++] = left[firstPos++];
                 min = leftIntersection;
             } else {
@@ -137,7 +137,7 @@ public class Uppermost {
             Line previous = merged[mergedPos-1];
             Line current = right[i];
 
-            if(current.findIntersection(previous) < min){
+            if(current.findIntersection(previous) <= min){
                 minIndex = i;
                 min = current.findIntersection(previous);
             }
@@ -184,10 +184,10 @@ public class Uppermost {
         //visibleLines(new double[]{-2, -1, -0.5, -0.25}, new double[]{1, -4, 5, 2});
         //visibleLines(new double[]{0.25, 0.5, 1, 2}, new double[]{-3, 2, 3, -3});
         //visibleLines(new double[]{0.25, 0.5, 1, 2, -2, -1, -0.5, -0.25},
-         //       new double[]{-3, 2, 3, -3, 1, -4, 5, 2});
+        //       new double[]{-3, 2, 3, -3, 1, -4, 5, 2});
         //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, -4});
         //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, 6});
-        visibleLines(new double[]{0, -1, 1}, new double[]{5, -5, -5});
+        //visibleLines(new double[]{0, -1, 1}, new double[]{5, -5, -5});
 //        visibleLines(new double[]{-4, -6, 0, 4, 1, -1, -9, -7, -8, 3, 2, -5, -10, -3, -2},
 //                new double[]{-1189.0, -523.0, -3335.0, -6634.0,-4068.0, -2679.0, -41, -305, -153, -5753, -4878, -826,
 //                0, -1611, -2103});
