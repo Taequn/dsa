@@ -1,7 +1,9 @@
+import java.util.*;
+
 public class Uppermost {
     public static Line[] lines;
 
-    public static void visibleLines(double[] slopes, double[] intercepts){
+    public static int[] visibleLines(double[] slopes, double[] intercepts){
         if(slopes.length != intercepts.length){
             throw new IllegalArgumentException("slopes and intercepts must be the same length");
         }
@@ -9,12 +11,16 @@ public class Uppermost {
         for(int i = 0; i < slopes.length; i++){
             lines[i] = new Line(slopes[i], intercepts[i], i);
         }
-        sortLines();
+        Arrays.sort(lines);
         Line[] answer = recurssive(lines);
+        int[] indexes = new int[answer.length];
 
-        //for(int i = 0; i < answer.length; i++){
-        //    System.out.println(answer[i]);
-        //}
+        for(int i = 0; i < answer.length; i++){
+            indexes[i] = answer[i].index;
+            System.out.println(indexes[i]);
+        }
+
+        return indexes;
     }
 
     public static void print(Line[] lines){
@@ -23,10 +29,21 @@ public class Uppermost {
         }
     }
 
+    public static void print(String word, Line[] lines){
+        for(int i = 0; i < lines.length; i++){
+            System.out.println(word + " " + lines[i]);
+        }
+    }
+
+    /**
+     * RECURSIVE FUNCTION
+     * @param list
+     * @return array of visible lines
+     */
+
     public static Line[] recurssive(Line[] list){
-        System.out.println();
         if(list.length <= 2){
-            if(list.length == 1){
+            if(list.length <= 1){
                 return list;
             } else {
                 if(list[0].slope == list[1].slope){
@@ -71,43 +88,66 @@ public class Uppermost {
         return list;
     }
 
-    public static Line[] merge(Line[] left, Line[] right){
-        System.out.println("Left");
-        print(left);
-        System.out.println("Right");
-        print(right);
+    /**
+     * MERGE TWO ARRAYS
+     * RECURSIVE FUNCTION HELPER
+     * @param left
+     * @param right
+     * @return merged array
+     */
 
-        //initialize the answer
+    public static Line[] merge(Line[] left, Line[] right){
         int firstPos = 0;
         int secondPos = 0;
         int mergedPos = 0;
+        double min=0;
         Line[] merged = new Line[left.length + right.length];
 
         merged[mergedPos++] = left[firstPos++];
+        merged[merged.length - 1] = right[right.length - 1];
 
-        while(firstPos < left.length && secondPos < right.length){
-            double prevIntersection = left[firstPos-1].findIntersection(left[secondPos]);
-            double rightIntersection = left[firstPos].findIntersection(right[secondPos]);
+        double minmax = merged[0].findIntersection(merged[merged.length - 1]);
 
-            double currValueAtX = left[firstPos].evaluateAtX(prevIntersection);
-            double rightValueAtX = right[secondPos].evaluateAtX(prevIntersection);
+        while(firstPos < left.length){
+            Line previous = merged[mergedPos-1];
+            Line currentLeft = left[firstPos];
+            Line currentRight = right[secondPos];
 
-            if(prevIntersection < rightIntersection && currValueAtX > rightValueAtX){
+            double leftIntersection = previous.findIntersection(currentLeft);
+            double rightIntersection = previous.findIntersection(currentRight);
+
+
+            double currValueAtX = currentLeft.evaluateAtX(leftIntersection);
+            double rightValueAtX = currentRight.evaluateAtX(rightIntersection);
+
+
+            if(leftIntersection < rightIntersection && leftIntersection < minmax){
                 merged[mergedPos++] = left[firstPos++];
+                min = leftIntersection;
             } else {
-                merged[mergedPos++] = right[secondPos++];
+                min = rightIntersection;
                 firstPos=left.length+1;
             }
         }
 
-        while(firstPos < left.length){
-            merged[mergedPos++] = left[firstPos++];
-        }
-        while(secondPos < right.length){
-            merged[mergedPos++] = right[secondPos++];
+
+        //find the earliest intersection
+        int minIndex=0;
+        for(int i = secondPos; i < right.length; i++){
+            Line previous = merged[mergedPos-1];
+            Line current = right[i];
+
+            if(current.findIntersection(previous) < min){
+                minIndex = i;
+                min = current.findIntersection(previous);
+            }
+
         }
 
-        System.out.println("Merged");
+        secondPos = minIndex;
+        while(secondPos < right.length-1){
+            merged[mergedPos++] = right[secondPos++];
+        }
 
         //resize the array
         int count = 0;
@@ -117,32 +157,14 @@ public class Uppermost {
             }
         }
         Line[] answer = new Line[merged.length - count];
-        for(int i = 0; i < answer.length; i++){
-            answer[i] = merged[i];
-        }
-        print(answer);
-        return answer;
-    }
-
-
-
-    /**
-     * CHANGE INTO A PROPER SORT LATER
-     * O(n^2) for now
-     */
-    public static void sortLines(){
-        Line temp;
-        for(int i = 0; i < lines.length; i++){
-            for(int j = i + 1; j < lines.length; j++){
-                if(lines[i].slope > lines[j].slope){
-                    temp = lines[i];
-                    lines[i] = lines[j];
-                    lines[j] = temp;
-                }
+        int index = 0;
+        for(int i = 0; i < merged.length; i++){
+            if(merged[i] != null){
+                answer[index++] = merged[i];
             }
         }
+        return answer;
     }
-
 
 
     public static void printLines(){
@@ -151,14 +173,35 @@ public class Uppermost {
         }
     }
 
-    public static void main(String[] args) {
-        visibleLines(new double[]{1, 2, 3}, new double[]{1, 2, 3});
-    }
 
+    /**
+     *
+     * TESTING IS HERE
+     *
+     */
+
+    public static void main(String[] args) {
+        //visibleLines(new double[]{-2, -1, -0.5, -0.25}, new double[]{1, -4, 5, 2});
+        //visibleLines(new double[]{0.25, 0.5, 1, 2}, new double[]{-3, 2, 3, -3});
+        //visibleLines(new double[]{0.25, 0.5, 1, 2, -2, -1, -0.5, -0.25},
+         //       new double[]{-3, 2, 3, -3, 1, -4, 5, 2});
+        //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, -4});
+        //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, 6});
+        visibleLines(new double[]{0, -1, 1}, new double[]{5, -5, -5});
+//        visibleLines(new double[]{-4, -6, 0, 4, 1, -1, -9, -7, -8, 3, 2, -5, -10, -3, -2},
+//                new double[]{-1189.0, -523.0, -3335.0, -6634.0,-4068.0, -2679.0, -41, -305, -153, -5753, -4878, -826,
+//                0, -1611, -2103});
+
+    }
 }
 
 
-class Line {
+/**
+ * HELPER FUNCTIONS AND CLASSES
+ */
+
+
+class Line implements Comparable<Line> {
     double slope;
     double intercept;
     int index;
@@ -186,7 +229,21 @@ class Line {
     }
 
     public double findIntersection(Line other) {
-        return (other.intercept - this.intercept) / (this.slope - other.slope);
+        return (other.intercept - intercept) / (slope - other.slope);
+    }
+
+
+    public boolean equals(Line other){
+        return this.slope == other.slope && this.intercept == other.intercept;
+    }
+
+    @Override
+    public int compareTo(Line other){
+        if(this.slope == other.slope){
+            return Double.compare(this.intercept, other.intercept);
+        } else {
+            return Double.compare(this.slope, other.slope);
+        }
     }
 
     public String toString() {
