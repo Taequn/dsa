@@ -1,5 +1,6 @@
 import java.util.*;
 
+//CHANGE FUNCTION CALL IN LINE 87 FOR ORIGINAL IMPLEMENTATION
 public class Uppermost {
     public static Line[] lines;
 
@@ -81,7 +82,9 @@ public class Uppermost {
             //take the second half of the list
             Line[] secondHalf = recurssive(right);
             //print(secondHalf);
-            Line[] merged = merge(firstHalf, secondHalf);
+
+            //CHANGE FUNCTION CALL IN NEXT LINE TO merge(firstHalf, secondHalf) for original implementation
+            Line[] merged = alternativeMerge(firstHalf, secondHalf);
             return merged;
         }
 
@@ -164,6 +167,63 @@ public class Uppermost {
             }
         }
         return answer;
+    }
+
+    /**
+     * alternative merge: just wanna see if this works
+     */
+
+    public static Line[] alternativeMerge(Line[] left, Line[] right) {
+
+        //inefficient, but add all lines in increasing slope 
+        ArrayList<Line> allLines = new ArrayList<Line>();
+        for (int i = 0; i < left.length; i++) {
+            allLines.add(left[i]);
+        }
+        for (int i = 0; i < right.length; i++) {
+            allLines.add(right[i]);
+        }
+        ArrayList<Line> visible = new ArrayList<Line>();
+
+        //add two lines with least slope: the first one is always visible, the second
+        // one may be overshadowed later
+        visible.add(allLines.remove(0));
+        visible.add(allLines.remove(0));
+
+        int visibleCount = 2;
+        
+        for (Line l: allLines) {
+            Line lastVisible = visible.get(visibleCount - 1);
+            Line secondToLastVisible = visible.get(visibleCount - 2);
+
+            //if THIS line intersects the SECOND TO LAST one before the LAST one,
+            // the LAST one is not visible as it is overshadowed by THIS ONE
+            double lastIntersect = lastVisible.findIntersection(secondToLastVisible);
+            double thisIntersect = l.findIntersection(secondToLastVisible);
+            //we do this in a while loop, because THIS line might also be overshadowing
+            //the lines we have previously added to the list and assumed to be visible.
+            //so keep doing this until THIS line no longer overshadows anything, or there
+            //are no lines left to check
+            while (thisIntersect < lastIntersect && visibleCount > 1) {
+                visible.remove(visibleCount - 1);
+                visibleCount--;
+
+                if (visibleCount > 1) {
+                    lastVisible = visible.get(visibleCount - 1);
+                    secondToLastVisible = visible.get(visibleCount - 2);
+                    lastIntersect = lastVisible.findIntersection(secondToLastVisible);
+                    thisIntersect = l.findIntersection(secondToLastVisible);
+                }
+            }
+            visible.add(l);
+            visibleCount++;
+        }
+
+        Line[] visibleArray = new Line[visible.size()];
+        for (int i = 0; i < visibleArray.length; i++) {
+            visibleArray[i] = visible.get(i);
+        }
+        return visibleArray;
     }
 
 
