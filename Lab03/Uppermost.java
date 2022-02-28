@@ -1,6 +1,5 @@
 import java.util.*;
 
-//CHANGE FUNCTION CALL IN LINE 87 FOR ORIGINAL IMPLEMENTATION
 public class Uppermost {
     public static Line[] lines;
 
@@ -13,7 +12,17 @@ public class Uppermost {
             lines[i] = new Line(slopes[i], intercepts[i], i);
         }
         Arrays.sort(lines);
+
+        //Direct approach:
+        //Line[] answer = alternativeMerge(lines);
+
+        /***************************************************************************************
+        CONTAINS RECURSIVE APPROACH
+         ****************************************************************************************/
         Line[] answer = recurssive(lines);
+        /*****************************************************************************************
+         * CONTAINS RECURSIVE APPROACH
+         ****************************************************************************************/
         int[] indexes = new int[answer.length];
 
         for(int i = 0; i < answer.length; i++){
@@ -133,7 +142,6 @@ public class Uppermost {
             }
         }
 
-
         //find the earliest intersection
         int minIndex=0;
         for(int i = secondPos; i < right.length; i++){
@@ -170,19 +178,20 @@ public class Uppermost {
     }
 
     /**
-     * alternative merge: just wanna see if this works
+     * MERGE TWO ARRAYS (ALTERNATIVE) — DIRECT METHOD
+     * @param left
+     * @param right
+     * @return merged array with visable lines
      */
 
-    public static Line[] alternativeMerge(Line[] left, Line[] right) {
-
-        //inefficient, but add all lines in increasing slope 
+    public static Line[] alternativeMerge(Line[] lines){
+        //add lines to arraylist of lines
         ArrayList<Line> allLines = new ArrayList<Line>();
-        for (int i = 0; i < left.length; i++) {
-            allLines.add(left[i]);
+        for(int i = 0; i < lines.length; i++){
+            allLines.add(lines[i]);
         }
-        for (int i = 0; i < right.length; i++) {
-            allLines.add(right[i]);
-        }
+
+        //initiate an empty array of visible lines
         ArrayList<Line> visible = new ArrayList<Line>();
 
         //add two lines with least slope: the first one is always visible, the second
@@ -191,7 +200,7 @@ public class Uppermost {
         visible.add(allLines.remove(0));
 
         int visibleCount = 2;
-        
+
         for (Line l: allLines) {
             Line lastVisible = visible.get(visibleCount - 1);
             Line secondToLastVisible = visible.get(visibleCount - 2);
@@ -199,12 +208,12 @@ public class Uppermost {
             //if THIS line intersects the SECOND TO LAST one before the LAST one,
             // the LAST one is not visible as it is overshadowed by THIS ONE
             double lastIntersect = lastVisible.findIntersection(secondToLastVisible);
-            double thisIntersect = l.findIntersection(secondToLastVisible);
+            double currIntersect = l.findIntersection(secondToLastVisible);
             //we do this in a while loop, because THIS line might also be overshadowing
             //the lines we have previously added to the list and assumed to be visible.
             //so keep doing this until THIS line no longer overshadows anything, or there
             //are no lines left to check
-            while (thisIntersect < lastIntersect && visibleCount > 1) {
+            while (currIntersect < lastIntersect && visibleCount > 1) {
                 visible.remove(visibleCount - 1);
                 visibleCount--;
 
@@ -212,7 +221,7 @@ public class Uppermost {
                     lastVisible = visible.get(visibleCount - 1);
                     secondToLastVisible = visible.get(visibleCount - 2);
                     lastIntersect = lastVisible.findIntersection(secondToLastVisible);
-                    thisIntersect = l.findIntersection(secondToLastVisible);
+                    currIntersect = l.findIntersection(secondToLastVisible);
                 }
             }
             visible.add(l);
@@ -224,6 +233,26 @@ public class Uppermost {
             visibleArray[i] = visible.get(i);
         }
         return visibleArray;
+    }
+
+    /**
+     * MERGE TWO ARRAYS (ALTERNATIVE) — RECURSIVE METHOD
+     * @param left
+     * @param right
+     * @return merged array with visable lines
+     */
+
+    public static Line[] alternativeMerge(Line[] left, Line[] right) {
+        //create a new array of lines
+        Line[] merged = new Line[left.length + right.length];
+        //add the first one and then the second one
+        for(int i = 0; i < left.length; i++){
+            merged[i] = left[i];
+        }
+        for(int j = 0; j < right.length; j++){
+            merged[left.length+j] = right[j];
+        }
+        return alternativeMerge(merged);
     }
 
 
@@ -248,9 +277,9 @@ public class Uppermost {
         //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, -4});
         //visibleLines(new double[]{-2, -1, 1, 2}, new double[]{-4, -2, -2, 6});
         //visibleLines(new double[]{0, -1, 1}, new double[]{5, -5, -5});
-//        visibleLines(new double[]{-4, -6, 0, 4, 1, -1, -9, -7, -8, 3, 2, -5, -10, -3, -2},
-//                new double[]{-1189.0, -523.0, -3335.0, -6634.0,-4068.0, -2679.0, -41, -305, -153, -5753, -4878, -826,
-//                0, -1611, -2103});
+        visibleLines(new double[]{-4, -6, 0, 4, 1, -1, -9, -7, -8, 3, 2, -5, -10, -3, -2},
+                new double[]{-1189.0, -523.0, -3335.0, -6634.0,-4068.0, -2679.0, -41, -305, -153, -5753, -4878, -826,
+                0, -1611, -2103});
 
     }
 }

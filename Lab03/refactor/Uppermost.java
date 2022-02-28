@@ -124,7 +124,8 @@ public class Uppermost {
 
         int visibleLines = 2;
 
-        for (Line l: allLines) { // TODO: Instead of looping over the whole thing, loop through both arrays
+        for (Line l: allLines) {
+            // TODO: Instead of looping over the whole thing, loop through both arrays
             Line lastVisible = topLines.get(visibleLines - 1);
             Line secondToLastVisible = topLines.get(visibleLines - 2);
 
